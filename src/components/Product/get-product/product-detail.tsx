@@ -4,7 +4,7 @@ import Web3Service from "../../../services/web3Service";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../features/store";
 import { ABI_BUY_PRODUCT } from "./ABI-for-buy";
-import { contractAddress, systemAddress } from "../config/contract-config";
+import { contractAddress } from "../config/contract-config";
 import { useState } from "react";
 
 export default function ProductDetail() {
@@ -38,7 +38,7 @@ export default function ProductDetail() {
 
       await web3.eth.sendTransaction({
         from: address,
-        to: systemAddress,
+        to: product.owner,
         value: web3.utils.toWei(product.price, "ether"),
       });
 
