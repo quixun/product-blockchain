@@ -24,6 +24,13 @@ contract Marketplace {
         uint price
     );
     event ProductPurchased(uint id, address buyer);
+    event ProductUpdated( // ✅ New event
+        uint id,
+        string name,
+        string description,
+        string imageCID,
+        uint price
+    );
 
     function uploadProduct(
         string memory _name,
@@ -44,14 +51,24 @@ contract Marketplace {
             false
         );
 
-        emit ProductUploaded(productCount, msg.sender, _name, _description, _imageCID, _price);
+        emit ProductUploaded(
+            productCount,
+            msg.sender,
+            _name,
+            _description,
+            _imageCID,
+            _price
+        );
     }
 
     function buyProduct(uint _id) external payable {
         Product storage product = products[_id];
         require(!product.isSold, "Product already sold");
         require(msg.value == product.price, "Incorrect amount");
-        require(product.owner != msg.sender, "Owner cannot buy their own product");
+        require(
+            product.owner != msg.sender,
+            "Owner cannot buy their own product"
+        );
 
         product.owner.transfer(msg.value);
         product.isSold = true;
@@ -84,5 +101,29 @@ contract Marketplace {
             product.price,
             product.isSold
         );
+    }
+
+    // ✅ New function to update product info
+    function updateProductInfo(
+        uint _id,
+        string memory _name,
+        string memory _description,
+        string memory _imageCID,
+        uint _price
+    ) external {
+        Product storage product = products[_id];
+        require(
+            msg.sender == product.owner,
+            "Only owner can update the product"
+        );
+        require(!product.isSold, "Cannot update a sold product");
+        require(_price > 0, "Price must be greater than zero");
+
+        product.name = _name;
+        product.description = _description;
+        product.imageCID = _imageCID;
+        product.price = _price;
+
+        emit ProductUpdated(_id, _name, _description, _imageCID, _price);
     }
 }

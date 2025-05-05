@@ -9,6 +9,7 @@ import UploadProduct from "../components/Product/upload-product/upload-product";
 import GetProduct from "../components/Product/get-product/get-product";
 import ProductDetail from "../components/Product/get-product/product-detail";
 import MyProducts from "../components/Product/get-product/my-products";
+import UpdateProduct from "../components/Product/update-product/update-product";
 
 const Router = () => {
   return (
@@ -24,6 +25,7 @@ const Router = () => {
             <Route path="products" element={<GetProduct />} />
             <Route path="my-products" element={<MyProducts />} />
             <Route path="product-detail/:productName" element={<ProductDetail />} />
+            <Route path="update-product/:productName" element={<UpdateProduct />} />
           </Route>
         </Route>
       </Routes>

@@ -39,7 +39,7 @@ export default function GetProduct() {
               className="relative bg-white p-4 rounded-xl shadow-md space-y-2"
             >
               {product.isSold && (
-                <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
+                <span className="absolute top-2 right-2 z-50 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
                   SOLD OUT
                 </span>
               )}

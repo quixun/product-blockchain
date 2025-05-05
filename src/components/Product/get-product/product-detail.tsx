@@ -1,16 +1,18 @@
 import { useNavigate, useParams } from "react-router";
 import { useGetProducts } from "./use-fetch-product";
 import Web3Service from "../../../services/web3Service";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../features/store";
 import { ABI_BUY_PRODUCT } from "./ABI-for-buy";
 import { contractAddress } from "../config/contract-config";
 import { useState } from "react";
+import { updateAcount } from "../../../features/account/accountSlice";
 
 export default function ProductDetail() {
   const { productName } = useParams<{ productName: string }>();
   const { products, loading, error, refetch } = useGetProducts();
   const { address } = useSelector((state: RootState) => state.account);
+  const dispatch = useDispatch();
 
   const [isBuying, setIsBuying] = useState<boolean>(false);
   const [buyerInfo, setBuyerInfo] = useState({
@@ -21,7 +23,10 @@ export default function ProductDetail() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const product = products.find((p) => p.name === productName);
+  const product = products.find(
+    (p) =>
+      p.name.toLowerCase().trim() === productName?.toLocaleLowerCase().trim()
+  );
   const navigate = useNavigate();
 
   const handleBuy = async () => {
@@ -30,23 +35,38 @@ export default function ProductDetail() {
     const web3 = Web3Service.getInstance().getWeb3();
     const contract = new web3.eth.Contract(ABI_BUY_PRODUCT, contractAddress);
 
+    setIsBuying(true);
     try {
+      // Send transaction to smart contract
       await contract.methods.buyProduct(product.id).send({
         from: address,
         value: web3.utils.toWei(product.price, "ether"),
       });
 
+      // Transfer payment to seller
       await web3.eth.sendTransaction({
         from: address,
         to: product.owner,
         value: web3.utils.toWei(product.price, "ether"),
       });
 
+      // ✅ Update balance and nonce
+      const balance = await web3.eth.getBalance(address);
+      const nonce = await web3.eth.getTransactionCount(address);
+      dispatch(
+        updateAcount({
+          balance: web3.utils.fromWei(balance, "ether"),
+          nonce: nonce.toString(),
+        })
+      );
+
       setShowSuccessModal(true);
-      refetch();
+      refetch(); // Refresh product list
     } catch (err) {
       console.error(err);
       alert("❌ Something went wrong. Please try again.");
+    } finally {
+      setIsBuying(false);
     }
   };
 
@@ -139,6 +159,17 @@ export default function ProductDetail() {
           <span className="uppercase text-lg">Product Price</span>
           <span>{product.price} ETH</span>
         </div>
+
+        {product.owner === address && (
+          <div className="w-full flex justify-center mt-10">
+            <button
+              className="bg-green-400 text-white px-4 py-3 rounded-md hover:bg-green-500 cursor-pointer transition-colors"
+              onClick={() => navigate(`/update-product/${product.name}`)}
+            >
+              Update Product
+            </button>
+          </div>
+        )}
 
         {isBuying && (
           <div className="flex flex-col mt-5 mx-auto w-full max-w-md gap-3">
