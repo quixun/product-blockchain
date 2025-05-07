@@ -53,20 +53,13 @@ npm --version   # Should show 9.x.x or higher
 
 ### 4. IPFS Setup
 1. Install IPFS:
-   - For macOS (using Homebrew):
-   ```bash
-   brew install ipfs
-   ```
-   - For Linux:
-   ```bash
-   wget https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz
-   tar -xvzf kubo_v0.26.0_linux-amd64.tar.gz
-   cd kubo
-   sudo ./install.sh
-   ```
-   - For Windows:
-   - Download the latest version from [ipfs.tech](https://ipfs.tech/#install)
-   - Extract and add to system PATH
+   -Go to this `https://docs.ipfs.tech/install/command-line/#install-official-binary-distributions`
+
+   _Scroll to Kubo Daemon & CLI 
+   _Follow those steps to initial IPFS node in your device (follow step 0 - step 4)
+   _Set that Path into environment variable
+   _In terminal:  ipfs --version
+                  -> ipfs version 0.34.1 --> done
 
 2. Initialize IPFS:
 ```bash
@@ -90,6 +83,29 @@ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST",
 ```bash
 ipfs daemon
 ```
+
+and you can see
+Initializing daemon...
+Kubo version: 0.34.0-Homebrew
+Repo version: 16
+System version: arm64/darwin
+Golang version: go1.24.1
+PeerID: 12D3KooWRhorrPYvUwzyJNFipsSfBh5prTmTwQgkscwRFF5Eoaeg
+Swarm listening on 127.0.0.1:4001 (TCP+UDP)
+Swarm listening on 192.168.1.106:4001 (TCP+UDP)
+Swarm listening on [::1]:4001 (TCP+UDP)
+Run 'ipfs id' to inspect announced and discovered multiaddrs of this node.
+RPC API server listening on /ip4/127.0.0.1/tcp/5001
+WebUI: http://127.0.0.1:5001/webui
+Gateway server listening on /ip4/127.0.0.1/tcp/8080
+Daemon is ready
+2025-05-06T14:42:19.769+0700    ERROR   cmd/ipfs        kubo/daemon.go:1171
+⚠️ A NEW VERSION OF KUBO DETECTED
+
+This Kubo node is running an outdated version (0.34.0).
+9% of the sampled Kubo peers are running a higher version.
+Visit https://github.com/ipfs/kubo/releases or https://dist.ipfs.tech/#kubo and update to version 0.34.1 or later.
+
 
 5. Verify IPFS is running:
 ```bash
